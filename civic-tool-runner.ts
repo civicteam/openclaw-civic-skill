@@ -1,23 +1,23 @@
 #!/usr/bin/env npx tsx
 /**
- * Nexus Tool Runner - Execute any Civic Nexus MCP tool dynamically
+ * Civic Tool Runner - Execute any Civic MCP tool dynamically
  *
- * This script connects to Civic Nexus and allows you to:
+ * This script connects to Civic and allows you to:
  * - List all available tools
  * - Search tools by name/description
  * - View tool schemas
  * - Call any tool with arguments
  *
  * Usage:
- *   npx tsx nexus-tool-runner.ts --list
- *   npx tsx nexus-tool-runner.ts --search postgres
- *   npx tsx nexus-tool-runner.ts --schema postgres-list_schemas
- *   npx tsx nexus-tool-runner.ts --call postgres-list_schemas
- *   npx tsx nexus-tool-runner.ts --call help --args '{"query": "how to search"}'
+ *   npx tsx civic-tool-runner.ts --list
+ *   npx tsx civic-tool-runner.ts --search postgres
+ *   npx tsx civic-tool-runner.ts --schema postgres-list_schemas
+ *   npx tsx civic-tool-runner.ts --call postgres-list_schemas
+ *   npx tsx civic-tool-runner.ts --call help --args '{"query": "how to search"}'
  *
  * Environment:
- *   NEXUS_URL   - The Nexus MCP URL (default: https://nexus.civic.com/hub/mcp)
- *   NEXUS_TOKEN - Your access token (required)
+ *   CIVIC_URL   - The Civic MCP URL (default: https://nexus.civic.com/hub/mcp)
+ *   CIVIC_TOKEN - Your access token (required)
  */
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -28,7 +28,7 @@ import type { Tool, CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 // MCP Client
 // ============================================================================
 
-class NexusClient {
+class CivicClient {
   private client: Client;
   private transport: StreamableHTTPClientTransport;
   private tools: Map<string, Tool> = new Map();
@@ -44,7 +44,7 @@ class NexusClient {
       },
     });
     this.client = new Client(
-      { name: "nexus-tool-runner", version: "1.0.0" },
+      { name: "civic-tool-runner", version: "1.0.0" },
       { capabilities: {} }
     );
   }
@@ -144,7 +144,7 @@ function formatToolResult(result: CallToolResult): void {
         console.log(`\nPlease visit this URL to authorize:\n${resource.text}\n`);
       } else if (resource._meta?.name === "continue_job_id") {
         console.log(`\nAfter authorizing, run:`);
-        console.log(`  npx tsx nexus-tool-runner.ts --call continue_job --args '{"job_id": "${resource.text}"}'`);
+        console.log(`  npx tsx civic-tool-runner.ts --call continue_job --args '{"job_id": "${resource.text}"}'`);
       } else {
         console.log(JSON.stringify(item, null, 2));
       }
@@ -160,10 +160,10 @@ function formatToolResult(result: CallToolResult): void {
 
 function printHelp(): void {
   console.log(`
-Nexus Tool Runner - Execute any Civic Nexus MCP tool
+Civic Tool Runner - Execute any Civic MCP tool
 
 Usage:
-  npx tsx nexus-tool-runner.ts [command] [options]
+  npx tsx civic-tool-runner.ts [command] [options]
 
 Commands:
   --list              List all available tools (grouped by category)
@@ -175,26 +175,26 @@ Commands:
 
 Examples:
   # List all tools
-  npx tsx nexus-tool-runner.ts --list
+  npx tsx civic-tool-runner.ts --list
 
   # Search for database tools
-  npx tsx nexus-tool-runner.ts --search postgres
+  npx tsx civic-tool-runner.ts --search postgres
 
   # See what parameters a tool needs
-  npx tsx nexus-tool-runner.ts --schema postgres-execute_sql
+  npx tsx civic-tool-runner.ts --schema postgres-execute_sql
 
   # Call a tool without arguments
-  npx tsx nexus-tool-runner.ts --call postgres-list_schemas
+  npx tsx civic-tool-runner.ts --call postgres-list_schemas
 
   # Call a tool with arguments
-  npx tsx nexus-tool-runner.ts --call postgres-execute_sql --args '{"query": "SELECT 1"}'
+  npx tsx civic-tool-runner.ts --call postgres-execute_sql --args '{"query": "SELECT 1"}'
 
   # Search Gmail
-  npx tsx nexus-tool-runner.ts --call google-gmail-search_gmail_messages --args '{"query": "is:unread"}'
+  npx tsx civic-tool-runner.ts --call google-gmail-search_gmail_messages --args '{"query": "is:unread"}'
 
 Environment Variables:
-  NEXUS_URL    MCP server URL (default: https://nexus.civic.com/hub/mcp)
-  NEXUS_TOKEN  Your Nexus access token (required)
+  CIVIC_URL    MCP server URL (default: https://nexus.civic.com/hub/mcp)
+  CIVIC_TOKEN  Your Civic access token (required)
 `);
 }
 
@@ -206,20 +206,20 @@ async function main() {
     return;
   }
 
-  const url = process.env.NEXUS_URL ?? "https://nexus.civic.com/hub/mcp";
-  const token = process.env.NEXUS_TOKEN;
+  const url = process.env.CIVIC_URL ?? "https://nexus.civic.com/hub/mcp";
+  const token = process.env.CIVIC_TOKEN;
 
   if (!token) {
-    console.error("Error: NEXUS_TOKEN environment variable is required");
+    console.error("Error: CIVIC_TOKEN environment variable is required");
     console.error("\nSet it with:");
-    console.error('  export NEXUS_TOKEN="your-token-here"');
+    console.error('  export CIVIC_TOKEN="your-token-here"');
     process.exit(1);
   }
 
-  const client = new NexusClient(url, token);
+  const client = new CivicClient(url, token);
 
   try {
-    console.log("Connecting to Nexus...");
+    console.log("Connecting to Civic...");
     await client.connect();
     console.log(`Connected. Found ${client.getTools().length} tools.`);
 

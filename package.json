@@ -1,18 +1,17 @@
 {
-  "name": "civic-nexus",
+  "name": "openclaw-civic-skill",
   "version": "1.0.0",
-  "description": "Connect any LLM to Civic Nexus MCP tools",
+  "description": "Connect any LLM to Civic MCP tools",
   "type": "module",
-  "main": "nexus-tool-runner.ts",
+  "main": "civic-tool-runner.ts",
   "scripts": {
-    "start": "tsx nexus-tool-runner.ts",
-    "list": "tsx nexus-tool-runner.ts --list",
-    "search": "tsx nexus-tool-runner.ts --search",
-    "call": "tsx nexus-tool-runner.ts --call"
+    "start": "tsx civic-tool-runner.ts",
+    "list": "tsx civic-tool-runner.ts --list",
+    "search": "tsx civic-tool-runner.ts --search",
+    "call": "tsx civic-tool-runner.ts --call"
   },
   "keywords": [
     "mcp",
-    "nexus",
     "civic",
     "claude",
     "llm",
